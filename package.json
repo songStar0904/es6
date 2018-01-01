@@ -4,7 +4,8 @@
   "description": "learn es6 by jspang",
   "main": "index.js",
   "scripts": {
-    "build": "babel src/index.js -o dist/index.js"
+    "build": "babel src/index.js -o dist/index.js",
+    "server": "live-server ./ --port=8080"
   },
   "repository": {
     "type": "git",
