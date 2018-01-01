@@ -1,0 +1,24 @@
+{
+  "name": "es6",
+  "version": "1.0.0",
+  "description": "learn es6 by jspang",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src/index.js -o dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/songStarr/es6.git"
+  },
+  "keywords": [],
+  "author": "songStar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/songStarr/es6/issues"
+  },
+  "homepage": "https://github.com/songStarr/es6#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
+  }
+}
