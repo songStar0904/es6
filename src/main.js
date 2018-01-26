@@ -426,3 +426,200 @@ console.log('--------第13节：Set和WeakSet数据结构---------');
 		console.log('2' + res)
 	})
 }
+// class
+{
+	class Point {
+		constructor(x, y) {
+			this.x = x;
+			this.y = y;
+		}
+		add () {
+			return this.x + this.y
+		}
+	}
+	var p = new Point(1, 2);
+	p.add(); // 3	
+}
+
+{
+	class B {};
+	let b = new B();
+	b.constructor === B.prototype.constructor; // true
+	B.prototype.constructor === B; // true
+}
+// Object.assign 添加方法
+{
+	class Point {
+		constructor () { ... }
+	}
+	Object.assign(Point.prototype, {
+		add () {},
+		toString () {}
+	});
+}
+// 不可枚举
+{
+	class Point {
+		constructor () {}
+		add () {}
+	}
+	Object.keys(Point.prototype); // []
+	Object.getOwnPropertyNames(Point.prototype); // ["constructor", "add"]
+
+	var Point2 = function () {}
+	Point2.prototype.add = function () {}
+	Object.keys(Point2.prototype); // ["add"]
+	Object.getOwnPropertyNames(Point2.prototype); // ["constructor", "add"]
+}
+// 类的属性名采用表达式
+{
+	let name = 'add';
+	class Point {
+		constructor () {}
+		[name] () {}
+	}
+}
+// 共享原型对象
+{
+	class Point {};
+	let p1 = new Point();
+	let p2 = new Point();
+	p1.prototype === p2.prototype; // true
+	p1.__proto__ === p2.__proto__; // true
+}
+// 使用表达式是形式定义
+{
+	let MyClass = class Me {
+		getClassName () {
+			return Me.name;
+		}
+	};
+	let inst = new MyClass();
+	inst.getClassName(); // Me
+	MyClass.name; // Me
+	Me.name; // Me is not defined
+}
+// 立即执行
+{
+	let p = new class {
+		constructor(name) {
+			this.name = name;
+		}
+		sayName () {
+			console.log(this.name);
+		}
+	}('songStar');
+	p.sayName(); // songStar
+}
+// 私有方法和私有属性
+{
+	class Foo {
+		// 共有方法
+		baz () {
+			this._bar();
+		}
+		// 私有方法
+		_bar () {
+			return '_bar';
+		}
+	}
+}
+{
+	class Foo {
+		baz () {
+			bar.call(this);
+		}
+	}
+	function bar() {
+		return 'bar';
+	}
+}
+{
+	let bar Symbol('bar');
+	let snaf = Symbol('snaf');
+	export default class MyClass {
+		// 公有方法
+		foo (baz) {
+			this[bar](baz);
+		}
+		// 私有方法
+		[bar](baz) {
+			return this[snaf] = baz;
+		}
+	}
+}
+// 私有属性
+{
+	class Point{
+		#x = 0;
+		constructor (x) {
+			#x = +x; // === this.#x = +x;
+		}
+		get x () {
+			return #x;
+		}
+		set x (value) {
+			#x = +value;
+		}
+		#add (value) {
+			#x += value;
+		}
+	}
+	Point.x;
+}
+// this 指向
+{
+	class Point{
+		constructor () {
+			this.sayName = (name) => {
+				this.print(`hello ${name}`);
+			}
+		}
+		sayName (name) {
+			this.print(`hello${name}`);
+		}
+		print (text) {
+			console.log(text);
+		}
+	}
+	let p = new Point();
+	let {sayName} = p;
+	sayName('songStar'); // TypeError: Cannot read property 'print' of undefined
+}
+// 解决方法
+{
+	class Point {
+		constructor () {
+			this.sayName = this.sayName.bind(this)
+		}
+	}
+}
+{
+	class Point {
+		constructor () {
+			this.sayName = (name) => {
+				this.print(`hello ${name}`);
+			}
+		}
+	}
+}
+{
+	function selfish (target) {
+		const cache = new WeakMap();
+		const handler = {
+			get (target, key) {
+				const value = Reflect.get(target, key);
+				if (typeof value !== 'function') {
+					return value;
+				}
+				if (! cache.has(value)) {
+					cache.set(value, value.bind(target));
+				}
+				return cache.get(value);
+			}
+		};
+		const proxy = new Proxy(target, handler);
+		return proxy;
+	}
+	let p = new selfish(new Point());
+}
